@@ -1,10 +1,10 @@
 var express = require('express');
 var mongoskin = require('mongoskin');
 
-var username = '' // TODO
-var password = '' // TODO
-var url = '' // TODO
-var db = mongoskin.db('mongodb://'+username+':'+password+'@'+url+':39960/yelp', {safe:true})
+var username = 'nik' // TODO
+var password = 'Dummy12345' // TODO
+var url = 'ds047940.mongolab.com' // TODO
+var db = mongoskin.db('mongodb://'+username+':'+password+'@'+url+':47940/hackathon-yelp', {safe:true})
 var app = express();
 
 // view engine setup
@@ -19,6 +19,7 @@ app.get('/q0/:format', function(req, res){
     var query = {"city":"Middleton", "attributes" : {"Good for Kids" : true}};
     var projection = {};
     db.collection('business').find(query, projection).toArray(function(e, items){
+		if (e) console.log(e);
         if (req.params['format'] == 'json'){
             res.status(200).send(items);
         }else if (req.params['format'] == 'html'){
@@ -34,12 +35,12 @@ app.get('/q0/:format', function(req, res){
 
 
 app.get('/q1/:format', function(req, res){
-    var question = "Question?"; // TODO
-    var query = {}; // TODO
+    var question = 'What is the top-rated business for a price range of "2"?';
+    var query =  { stars: {$gt: 4} , "attributes.Price Range":2};
     var projection = {};    // TODO
     var collection = 'business';     // TODO
     db.collection(collection)  
-        .find(query, projection)
+        .find(query, projection).sort({'stars':-1})
         .limit(10)  // TODO
         .toArray(function(e, items){
         if (req.params['format'] == 'json'){
